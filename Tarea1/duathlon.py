@@ -1,7 +1,7 @@
 from sys import stdin
 
 
-def calculate_margin(t, r, tramposo_running, tramposo_cycling, oponentes):
+def margen(t, r, tramposo_running, tramposo_cycling, oponentes):
     k = t - r
     # Tiempo del tramposo: T = r/v_r + k/v_k
     tiempo_tramposo = (r / tramposo_running) + (k / tramposo_cycling)
@@ -27,7 +27,7 @@ def solve(l, r, t, tramposo_running, tramposo_cycling, oponentes):
         m1 = l + (r - l) / 3
         m2 = r - (r - l) / 3
 
-        if calculate_margin(t, m1, tramposo_running, tramposo_cycling, oponentes) < calculate_margin(t, m2, tramposo_running, tramposo_cycling, oponentes):
+        if margen(t, m1, tramposo_running, tramposo_cycling, oponentes) < margen(t, m2, tramposo_running, tramposo_cycling, oponentes):
             ans = solve(m1, r, t, tramposo_running, tramposo_cycling, oponentes)
         else:
             ans = solve(l, m2, t, tramposo_running, tramposo_cycling, oponentes)
@@ -36,24 +36,43 @@ def solve(l, r, t, tramposo_running, tramposo_cycling, oponentes):
 
 def main():
 
-    t = int(stdin.readline())
-    n = int(stdin.readline())
 
-    velocidades = []
-    for _ in range(n):
-        running, cycling = map(float, stdin.readline().split())
-        velocidades.append((running, cycling))
 
-    tramposo_running, tramposo_cycling = velocidades[-1]
-    oponentes = velocidades[:-1]
+    t = stdin.readline()
 
-    mejor_running = solve(0, 100, t, tramposo_running, tramposo_cycling, oponentes)
+    while t != "":
+        if t != "\n":
 
-    print(f"{mejor_running:.2f}, {t - mejor_running:.2f}")
+            t = int(t)
 
-    max_margin = calculate_margin(t, mejor_running, tramposo_running, tramposo_cycling, oponentes)
+            n = int(stdin.readline())
 
-    print(round(max_margin))
+            velocidades = []
+            for _ in range(n):
+                running, cycling = map(float, stdin.readline().split())
+                velocidades.append((running, cycling))
+
+            tramposo_running, tramposo_cycling = velocidades[-1]
+            oponentes = velocidades[:-1]
+
+            mejor_running = solve(0, t, t, tramposo_running, tramposo_cycling, oponentes)
+
+            max_margen = margen(t, mejor_running, tramposo_running, tramposo_cycling, oponentes)
+
+            if max_margen > 0:
+
+                print(f"The cheater can win by {round(max_margen)} seconds with r = {mejor_running:.2f}km and k = {t - mejor_running:.2f}km.")
+
+            elif max_margen < 0:
+
+                print("The cheater cannot win.")
+
+            else:
+                print("0")
+
+
+
+        t = stdin.readline()
 
 
 

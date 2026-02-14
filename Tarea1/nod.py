@@ -2,7 +2,7 @@ from sys import stdin
 
 LIMIT = 1000000
 
-def generar_tabla():
+def generar_nod():
     nod = [0] * (LIMIT + 1)
 
     for i in range(1, LIMIT + 1):
@@ -33,7 +33,6 @@ def buscar_index(l, r, v, A):
         mid = (l + r) // 2
 
         # Si el valor buscado es menor o igual a la mitad,
-        # se busca en la parte H ** (1 / mid_k) - W ** (1 / mid_k)izquierda (incluyendo la mitad)
         if v < A[mid]:
             ans = buscar_index(l, mid, v, A)
         else:
@@ -45,7 +44,7 @@ def buscar_index(l, r, v, A):
 def main():
     casos = stdin.readline()
 
-    nod = generar_tabla()
+    nod = generar_nod()
 
     secuencia = generar_secuencia(nod)
 
@@ -54,7 +53,7 @@ def main():
         inicio, final = stdin.readline().split()
 
         index1 = buscar_index(0, len(secuencia), int(inicio), secuencia)
-        index2 = buscar_index(0, len(secuencia), int(final) + 1 , secuencia)
+        index2 = buscar_index(0, len(secuencia), int(final) + 1, secuencia)
 
         print(f"Case {i + 1}: {index2 - index1}")
 

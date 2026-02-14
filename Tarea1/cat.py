@@ -61,26 +61,31 @@ def main():
 
     while H != 0 and W != 0:
 
-        k = buscar_k(1, math.log(H, 2), H, W)
+        if H == 1 and W == 1:
 
-        N = W ** (1 / k)
+            print(0, 1)
+        else:
 
-        gatos_vagos = 0
-        for i in range(int(k)):  # Esto va de 0 a k-1
-            gatos_vagos += N ** i
+            k = buscar_k(1, int(math.log(H, 2)) + 1, H, W)
 
-        altura_total = 0
-        cantidad_gatos = 1  # Empezamos con el gato inicial (N^0)
-        altura_del_gato = H  # Altura del gato inicial
+            N = int(round(W ** (1 / k)))
 
-        for i in range(int(k) + 1):  # Incluye el nivel k (los trabajadores)
-            altura_total += cantidad_gatos * altura_del_gato
+            gatos_vagos = 0
+            for i in range(int(k)):  # Esto va de 0 a k-1
+                gatos_vagos += N ** i
 
-            # Preparamos los valores para el siguiente nivel
-            cantidad_gatos *= N
-            altura_del_gato //= (N + 1)  # División entera para mantener precisión
+            altura_total = 0
+            cantidad_gatos = 1  # Empezamos con el gato inicial (N^0)
+            altura_del_gato = H  # Altura del gato inicial
 
-        print(int(round(gatos_vagos)), int(round(altura_total)))
+            for i in range(int(k) + 1):  # Incluye el nivel k (los trabajadores)
+                altura_total += cantidad_gatos * altura_del_gato
+
+                # Preparamos los valores para el siguiente nivel
+                cantidad_gatos *= N
+                altura_del_gato //= (N + 1)  # División entera para mantener precisión
+
+            print(int(round(gatos_vagos)), int(round(altura_total)))
 
 
         H, W = map(int, stdin.readline().split())
