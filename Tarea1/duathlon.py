@@ -6,7 +6,7 @@ def margen(t, r, tramposo_running, tramposo_cycling, oponentes):
     # Tiempo del tramposo: T = r/v_r + k/v_k
     tiempo_tramposo = (r / tramposo_running) + (k / tramposo_cycling)
 
-    # Buscamos al oponente más rápido para esta r específica
+    # Buscar al oponente más rápido para esta r específica
     # (El que tenga el tiempo mínimo)
     mejor_oponenten = float('inf')
     for opp_running, opp_cycling in oponentes:

@@ -1,4 +1,9 @@
 """
+
+Mateo Monroy Aristizabal
+8987333
+15/02/2026
+
 H: Altura del gato inicial (dada).
 W: Número de gatos trabajadores (de altura 1, dado).
 N: Número de gatos dentro de cada sombrero (desconocido).
@@ -41,11 +46,11 @@ from sys import stdin
 import math
 
 def buscar_k(l, r, H, W):
-    if r - l == 1:
+    if r - l < 0.01:
         ans = l
 
     else:
-        mid_k = (l + r) // 2
+        mid_k = (l + r) / 2
 
         if H ** (1 / mid_k) - W ** (1 / mid_k) < 1:
             ans = buscar_k(l, mid_k, H, W)
@@ -66,7 +71,7 @@ def main():
             print(0, 1)
         else:
 
-            k = buscar_k(1, int(math.log(H, 2)) + 1, H, W)
+            k = round(buscar_k(1, int(math.log(H, 2)) + 1, H, W))
 
             N = int(round(W ** (1 / k)))
 

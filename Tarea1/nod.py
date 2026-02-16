@@ -1,3 +1,36 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+14/02/2026
+
+Complejidad:
+
+La funcion generar_nod y generar_secuencia se ejecutan una sola vez y estas dependen de LIMIT que es 1.000.000.
+
+Temporal:
+generar_nod es O(LIMIT log(LIMIT))
+
+
+Espacial:
+generar_nod es O(LIMIT)
+
+
+La funcion buscar_index es una busqueda binaria recursiva:
+
+T(n) = T(n/2)
+
+Lo que segun el teroema maestro da:
+
+a = 1
+b = 2
+k = 0
+
+por lo que b^k = a
+
+lo que nos da una complejidad de O(log n)
+
+"""
+
 from sys import stdin
 
 LIMIT = 1000000
@@ -32,11 +65,11 @@ def buscar_index(l, r, v, A):
     else:
         mid = (l + r) // 2
 
-        # Si el valor buscado es menor o igual a la mitad,
+
         if v < A[mid]:
             ans = buscar_index(l, mid, v, A)
         else:
-            # Si es mayor, se busca en la derecha
+
             ans = buscar_index(mid, r, v, A)
 
     return ans
