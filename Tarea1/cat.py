@@ -54,7 +54,9 @@ k = 0
 
 por lo que b^k = a
 
-lo que nos da una complejidad de O(log n)\
+lo que nos da una complejidad de O(log n)
+
+donde n es log2 H
 
 Luego la busqueda de los gatos_vagos y la altura_total es de O(k) que en el pero caso el valor de k es log2 H
 por lo que en el peor caso la complejidad es O(log2 H)

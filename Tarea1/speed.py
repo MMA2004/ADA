@@ -2,6 +2,26 @@
 Mateo Monroy Aristizabal
 8987333
 16/02/2026
+
+Complejidad:
+
+La función buscar_c implementa una bisección recursiva sobre un intervalo real.
+
+En cada llamada recursiva:
+- El intervalo de búsqueda se divide a la mitad.
+- Se ejecuta la función calcular_error, que recorre todos los segmentos.
+
+Si n es la cantidad de segmentos, entonces:
+
+    calcular_error cuesta O(n)
+
+La recurrencia de buscar_c es:
+
+    T(m) = T(m/2) + O(n)
+
+No se puede aplicar el Teorema maestro porque hay dos variables diferentes involucradas
+
+
 """
 
 from sys import stdin
@@ -20,7 +40,7 @@ def calcular_error(segmentos, c):
 
 
 
-def solve(l, r, segmentos, t):
+def buscar_c(l, r, segmentos, t):
 
     if r - l < ERROR:
         ans = l
@@ -29,9 +49,9 @@ def solve(l, r, segmentos, t):
         mid = (l + r) / 2
 
         if calcular_error(segmentos, mid) < t:
-            ans = solve(l, mid, segmentos, t)
+            ans = buscar_c(l, mid, segmentos, t)
         else:
-            ans = solve(mid, r, segmentos, t)
+            ans = buscar_c(mid, r, segmentos, t)
 
     return ans
 
@@ -59,7 +79,7 @@ def main():
         max_c = (distancia_max / t) - min_s
 
 
-        c = solve(min_c, max_c, segmentos, t)
+        c = buscar_c(min_c, max_c, segmentos, t)
 
         ans = round(c, 15)
         print(f"{ans:.9f}")
