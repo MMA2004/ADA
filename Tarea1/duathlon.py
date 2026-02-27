@@ -1,5 +1,25 @@
-from sys import stdin
+"""
+Mateo Monroy Aristizabal
+8987333
+17/02/2024
 
+Complejidad:
+
+La funcion merge tiene una complejidad de O(n) ya que recorre todo el arreglo de los oponentes.
+
+La funcion buscar_k es una biseccion recursiva que se va dividiendo en 3 mitades
+parecido a una busqueda ternaria.
+
+su complejidad es:
+m = es la distacia total de la carrera
+
+T(m) = T(2m/3) + O(n)
+
+No se puede aplicar el teorema maestro porque hay dos variables diferentes en la ecuacion.
+
+"""
+
+from sys import stdin
 
 def margen(t, r, tramposo_running, tramposo_cycling, oponentes):
     k = t - r
@@ -18,8 +38,8 @@ def margen(t, r, tramposo_running, tramposo_cycling, oponentes):
     return (mejor_oponenten - tiempo_tramposo) * 3600
 
 
-def solve(l, r, t, tramposo_running, tramposo_cycling, oponentes):
-    if (r - l) < 0.00001:
+def buscar_r(l, r, t, tramposo_running, tramposo_cycling, oponentes):
+    if (r - l) < 0.000001:
         ans = l
 
     else:
@@ -28,9 +48,9 @@ def solve(l, r, t, tramposo_running, tramposo_cycling, oponentes):
         m2 = r - (r - l) / 3
 
         if margen(t, m1, tramposo_running, tramposo_cycling, oponentes) < margen(t, m2, tramposo_running, tramposo_cycling, oponentes):
-            ans = solve(m1, r, t, tramposo_running, tramposo_cycling, oponentes)
+            ans = buscar_r(m1, r, t, tramposo_running, tramposo_cycling, oponentes)
         else:
-            ans = solve(l, m2, t, tramposo_running, tramposo_cycling, oponentes)
+            ans = buscar_r(l, m2, t, tramposo_running, tramposo_cycling, oponentes)
 
     return ans
 
@@ -55,7 +75,7 @@ def main():
             tramposo_running, tramposo_cycling = velocidades[-1]
             oponentes = velocidades[:-1]
 
-            mejor_running = solve(0, t, t, tramposo_running, tramposo_cycling, oponentes)
+            mejor_running = buscar_r(0, t, t, tramposo_running, tramposo_cycling, oponentes)
 
             max_margen = margen(t, mejor_running, tramposo_running, tramposo_cycling, oponentes)
 
