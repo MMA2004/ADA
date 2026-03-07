@@ -1,39 +1,39 @@
+"""
+Mateo Monroy Aristizabal
+05/03/2026
+
+Complejidad:
+Se usa el algoritmo de Kahn para obtener el orden topologico:
+V son los nodos (sabores de las pizzas)
+E son las aristas (son lo que cambia al pasar de una receta a otra)
+O(V + E)
+
+Luego se usa la funcion calcular_costos_prestigios
+O(V + E)
+
+Luego se usa la funcion dp:
+Los estados que se guardan en la memoria son:
+(n, presupuesto)
+
+donde:
+
+n puede tomar V valores
+presupuesto puede tomar B valores
+
+O(V * B)
+
+Cada estado hace trabajo O(1).
+
+Complejidad final:
+O(V * B)
+
+V es el numero de pizzas diferentes
+B es el presupuesto maximo.
+"""
+
+
 from sys import stdin
 from collections import deque
-
-def construir_grafo(recetas):
-
-    mapa_ids = {}
-    siguiente_id = 0
-
-    # Paso 1: asignar ID a cada plato
-    for derived, base, _, cost, prestige in recetas:
-
-        if base not in mapa_ids:
-            mapa_ids[base] = siguiente_id
-            siguiente_id += 1
-
-        if derived not in mapa_ids:
-            mapa_ids[derived] = siguiente_id
-            siguiente_id += 1
-
-    recetas_totales = siguiente_id
-
-    # Paso 2: crear estructuras
-    adj = [[] for _ in range(recetas_totales)]
-    incidencias = [0] * recetas_totales
-
-    # Paso 3: agregar aristas
-    for derived, base, _, cost, prestige in recetas:
-
-        u = mapa_ids[base]
-        v = mapa_ids[derived]
-
-        adj[u].append((v, cost, prestige))
-        incidencias[v] += 1
-
-    return adj, incidencias, mapa_ids
-
 
 def topoSortKahn(G, incidencias):
     queue = deque()
@@ -88,45 +88,88 @@ def calcular_costos_prestigios(G, topo, incidencias):
 
     return costos, prestigios
 
-def dp(costos, prestigios, n, presupuesto):
-
-    if n == len(costos):
-        return 0
-    elif costos[n] > presupuesto:
-        return dp(costos, prestigios, n+1, presupuesto)
+def dp(costos, prestigios, n, presupuesto, memo):
+    if (n, presupuesto) in memo:
+        ans = memo[(n, presupuesto)]
     else:
-        return max(dp(costos, prestigios, n+1, presupuesto), costos[n] + dp(costos, prestigios, n+1, presupuesto - costos[n]))
+        if n == len(costos):
+            ans = (0, 0)
+        elif costos[n] > presupuesto:
+            ans = dp(costos, prestigios, n+1, presupuesto, memo)
+        else:
+            # opción 1: no tomar plato
+            p1, c1 = dp(costos, prestigios, n + 1, presupuesto, memo)
+
+            # opción 2: tomar plato
+            p2, c2 = dp(costos, prestigios, n + 1, presupuesto - costos[n], memo)
+            p2 += prestigios[n]
+            c2 += costos[n]
+
+            # comparar
+            if p2 > p1:
+                ans = (p2, c2)
+            elif p2 < p1:
+                ans = (p1, c1)
+            else:
+                ans = (p2, min(c1, c2))
+
+    memo[(n, presupuesto)] = ans
+
+    return ans
 
 
 def main():
 
-    presupuesto = int(stdin.readline())
+    presupuesto = stdin.readline()
 
 
     while presupuesto:
+        presupuesto = int(presupuesto)
         num_pizzas = int(stdin.readline())
 
-        recetas = []
+        mapa_ids = {}
+        siguiente_id = 0
+
+        adj = []
+        incidencias = []
 
         for _ in range(num_pizzas):
             derived, base, ingredient, cost, prestige = stdin.readline().split()
             cost = int(cost)
             prestige = int(prestige)
-            recetas.append((derived, base, ingredient, cost, prestige))
 
-        adj, incidencias, id_map = construir_grafo(recetas)
+            # crear nodo base si no existe
+            if base not in mapa_ids:
+                mapa_ids[base] = siguiente_id
+                siguiente_id += 1
+                adj.append([])
+                incidencias.append(0)
 
-        print(adj, incidencias, id_map)
+            # crear nodo derived si no existe
+            if derived not in mapa_ids:
+                mapa_ids[derived] = siguiente_id
+                siguiente_id += 1
+                adj.append([])
+                incidencias.append(0)
+
+            u = mapa_ids[base]
+            v = mapa_ids[derived]
+
+            # agregar arista
+            adj[u].append((v, cost, prestige))
+
+            # actualizar grado de entrada
+            incidencias[v] += 1
 
         topo = topoSortKahn(adj, incidencias)
-        print(topo)
 
         cost, prestige = calcular_costos_prestigios(adj, topo, incidencias)
-
-        max = dp(cost, prestige, 0, presupuesto)
+        memo = {}
+        max, min = dp(cost, prestige, 0, presupuesto, memo)
         print(max)
+        print(min)
 
-        presupuesto = int(stdin.readline())
+        presupuesto = stdin.readline()
 
 
 main()
