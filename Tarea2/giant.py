@@ -10,9 +10,9 @@ def giant(l, r, k, memo):
             ans = 0
         else:
             min_actual = float("inf")
-            for i in range(l, r + 1):
+            for m in range(l, r + 1):
 
-                candidato = (r - l + 1) * (k + i) + giant(l, i - 1, k, memo) + giant(i + 1, r, k, memo)
+                candidato = (r - l + 1) * (k + m) + giant(l, m - 1, k, memo) + giant(m + 1, r, k, memo)
 
                 min_actual = min(min_actual, candidato)
             memo[(l, r)] = min_actual
