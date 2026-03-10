@@ -1,20 +1,29 @@
 from sys import stdin
 
 
-def dp(i, k, x, A):
+def dp(i, k, x, A, memo):
 
-    if k <= 0:
-        return 0
-
-    elif i == len(A):
-        return float("inf")
-
-    elif i == x:
-        return dp(i+1, k, x, A)
+    if (i, k) in memo:
+        ans = memo[(i, k)]
 
     else:
+        if k <= 0:
+            ans = 0
+            memo[(i, k)] = ans
 
-        return min(dp(i + 1, k, x, A), dp(i + 1, k - A[i], x, A) + A[i])
+        elif i == len(A):
+            ans = float("inf")
+            memo[(i, k)] = ans
+
+        elif i == x:
+            ans = dp(i+1, k, x, A, memo)
+            memo[(i, k)] = ans
+
+        else:
+            ans = min(dp(i + 1, k, x, A, memo), dp(i + 1, k - A[i], x, A, memo) + A[i])
+            memo[(i, k)] = ans
+
+    return ans
 
 
 def main():
@@ -27,8 +36,9 @@ def main():
         for _ in range(n):
             porcentajes.append(float(stdin.readline()) * 100)
 
+        memo = {}
 
-        ans = dp(0, 5000.1 - porcentajes[x-1], x-1, porcentajes)
+        ans = dp(0, 5000.1 - porcentajes[x-1], x-1, porcentajes, memo)
 
         res = (porcentajes[x-1] / (porcentajes[x-1] + ans)) * 100
 
