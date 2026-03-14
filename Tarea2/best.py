@@ -1,3 +1,29 @@
+"""
+Mateo Monroy Aristizabal
+10/03/2026
+
+Complejidad:
+
+La memorizacion usa como clave la pareja (i,k) que representa el stackholder i y cuanto porcenatje acumulado me falta
+
+Puede haber i * k estados diferentes:
+
+i puede tomar 0 <= i <= n siendo n la cantidad de stakeholders
+
+y k puede tomar K valores que es la capacidad que queda para llegar al 50%
+
+Por lo que la cantidad de estados que se guardan en la memoria es O(n * k)
+
+Cada estado hace trabajo O(1):
+
+ya que solo se hacen sumas, comparaciones y asignaciones.
+
+Por ende la complejidad temporal es:
+
+O(n * K)
+
+"""
+
 from sys import stdin
 
 
