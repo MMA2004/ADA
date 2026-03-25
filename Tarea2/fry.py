@@ -1,3 +1,9 @@
+"""
+Mateo Monroy Aristizabal
+14/03/2026
+
+"""
+
 from sys import stdin
 
 
@@ -9,18 +15,21 @@ def mejorTiempo(i, bolitasDisponibles, tiempos, bolitas, memo):
 
         if i == len(tiempos):
             ans = 0
-
+            memo[(i, bolitasDisponibles)] = ans
         else:
 
             if bolitasDisponibles > 0:
-                bolitasDisponibles += bolitas[i]
-                ans = min(mejorTiempo(i+1, bolitasDisponibles - 1, tiempos, bolitas, memo) + (tiempos[i]/2), mejorTiempo(i+1, bolitasDisponibles, tiempos, bolitas, memo) + tiempos[i])
-
+                nuevasBolitasDisponibles = bolitasDisponibles + bolitas[i]
+                nuevasBolitasDisponibles = min(nuevasBolitasDisponibles, len(tiempos))
+                ans = min(mejorTiempo(i+1, nuevasBolitasDisponibles - 1, tiempos, bolitas, memo) + (tiempos[i]//2), mejorTiempo(i+1, nuevasBolitasDisponibles, tiempos, bolitas, memo) + tiempos[i])
+                memo[(i, bolitasDisponibles)] = ans
             else:
-                bolitasDisponibles += bolitas[i]
-                ans = mejorTiempo(i+1, bolitasDisponibles, tiempos, bolitas, memo) + tiempos[i]
+                nuevasBolitasDisponibles = bolitasDisponibles + bolitas[i]
+                nuevasBolitasDisponibles = min(nuevasBolitasDisponibles, len(tiempos))
+                ans = mejorTiempo(i+1, nuevasBolitasDisponibles, tiempos, bolitas, memo) + tiempos[i]
+                memo[(i, bolitasDisponibles)] = ans
 
-    memo[(i, bolitasDisponibles)] = ans
+
     return ans
 
 
@@ -41,7 +50,7 @@ def main():
 
         ans = mejorTiempo(0, 0, tiempos, bolitas, memo)
 
-        print(int(ans))
+        print(ans)
 
         rutas = int(stdin.readline())
 
