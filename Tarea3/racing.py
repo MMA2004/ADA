@@ -1,136 +1,75 @@
-/ *
-Implementacion
-Algoritmo
-de
-Kruskal
-para
-MST
-Autor: Carlos
-Ramirez
-Fecha: Abril
-30
-de
-2020
+from sys import stdin
 
-Dado
-que
-el
-algoritmo
-de
-kruskal
-trabaja
-explicitamente
-con
-las
-aristas
-del
-grafo
-resulta
-muy
-conveniente
-representar
-el
-grafo
-mediante
-una
-lista
-de
-aristas.
+class Arista:
+    def __init__(self, u, v, peso):
+        self.u = u
+        self.v = v
+        self.peso = peso
 
-* /
+    def __lt__(self, other):
+        return self.peso > other.peso
 
-# include <climits>
-# include <vector>
-# include <algorithm>
-# include <iostream>
 
-using
-namespace
-std;
 
-struct
-Arista
-{
-    int
-u, v, peso;
+def kruskal(nodos, aristas):
+    idArbol = [0 for _ in range(nodos)]
+    mst = []
+    total = 0
 
-Arista()
-{}
+    for i in range(nodos):
+        idArbol[i] = i
 
-Arista(int
-x, int
-y, int
-p){
-    u = x;
-v = y;
-peso = p;
-}
+    aristas.sort()
 
-bool
-operator < (Arista & a)
-{
-return peso < a.peso;
-}
-};
+    for arista in aristas:
+        u, v, peso = arista.u, arista.v, arista.peso
+        if idArbol[u] != idArbol[v]:
+            mst.append(arista)
+            total += peso
+            p1 = idArbol[u]
+            p2 = idArbol[v]
+            for i in range(nodos):
+                if idArbol[i] == p1:
+                    idArbol[i] = p2
 
-int
-n, total;
-vector < Arista > aristas;
-vector < int > idArbol(50000);
-vector < Arista > mst;
 
-void
-kruskal()
-{
-    int
-i, u, v, p1, p2;
+    return total
 
-for (i = 0; i < n; ++i)
-idArbol[i] = i;
 
-sort(aristas.begin(), aristas.end());
 
-for (vector < Arista >::iterator it = aristas.begin();
-it != aristas.end();
-++it){
-u = it->u;
-v = it->v;
 
-if (idArbol[u] != idArbol[v]){
-mst.push_back( * it);
-total += it->peso;
 
-p1 = idArbol[u];
-p2 = idArbol[v];
-for (i = 0; i < n; ++i)
-if (idArbol[i] == p2)
-idArbol[i] = p1;
-}
-}
-}
 
-int
+
+
+def main():
+
+    casos = int(stdin.readline())
+
+    while casos:
+
+        nodos, aristas = map(int, stdin.readline().split())
+
+        circutio = []
+        peso_total = 0
+
+        for _ in range(aristas):
+            u, v, peso = map(int, stdin.readline().split())
+            circutio.append(Arista(u-1, v-1, peso))
+            peso_total += peso
+
+        peso_maximo = kruskal(nodos, circutio)
+
+
+        print(peso_total - peso_maximo)
+
+        casos -= 1
+
+    nada = stdin.readline()
+
+
+
+
+
 main()
-{
-    int
-m, i, aux1, aux2, peso;
 
-cin >> n >> m;
-
-for (i = 0; i < m; i++)
-{
-cin >> aux1 >> aux2 >> peso;
-aristas.push_back(Arista(aux1, aux2, peso));
-}
-
-kruskal();
-
-cout << "El peso del arbol de recubrimiento minimo es " << total << endl;
-cout << "Aristas:" << endl;
-
-for (i = 0; i < mst.size();
-++i)
-cout << "(" << mst[i].u << ", " << mst[i].v << ")" << endl;
-
-return 0;
-}
