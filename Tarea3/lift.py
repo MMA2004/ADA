@@ -4,7 +4,7 @@ from heapq import heappush,heappop
 INF = float('inf')
 
 
-def dijkstra(n, k, T, pisos, pisos_dict, pos, worst):
+def dijkstra(n, k, T, pisos, pisos_conectores, pos, worst):
 
     dist = {}
     pqueue = []
@@ -45,7 +45,7 @@ def dijkstra(n, k, T, pisos, pisos_dict, pos, worst):
                     heappush(pqueue, (dist[v], v))
 
             # 2. cambiar de ascensor
-            for ascensor_nuevo in pisos_dict[piso]:
+            for ascensor_nuevo in pisos_conectores[piso]:
                 if ascensor_nuevo != ascensor:
 
                     v = (piso, ascensor_nuevo)
@@ -103,27 +103,27 @@ def main():
         for _ in range(n):
             pisos.append(list(map(int, stdin.readline().split())))
 
-        pisos_elevadores = {}
+        pisos_conectores = {}
 
-        for i in range(n):
-            for piso in pisos[i]:
-                if piso not in pisos_elevadores:
-                    pisos_elevadores[piso] = []
-                pisos_elevadores[piso].append(i)
+        for ascensor in range(n):
+            for piso in pisos[ascensor]:
+                if piso not in pisos_conectores:
+                    pisos_conectores[piso] = []
+                pisos_conectores[piso].append(ascensor)
 
         peores_tiempos = [{} for _ in range(n)]
 
-        for i in range(n):
-            for f in pisos[i]:
-                max_distancia = max(abs(f - x) for x in pisos[i])
-                peores_tiempos[i][f] = max_distancia * T[i]
+        for ascensor in range(n):
+            for piso in pisos[ascensor]:
+                max_distancia = max(abs(piso - x) for x in pisos[ascensor])
+                peores_tiempos[ascensor][piso] = max_distancia * T[ascensor]
 
         pos_idx = {}
         for i in range(n):
             for idx, f in enumerate(pisos[i]): pos_idx[(f, i)] = idx
 
 
-        print(dijkstra(n, k, T, pisos, pisos_elevadores, pos_idx, peores_tiempos))
+        print(dijkstra(n, k, T, pisos, pisos_conectores, pos_idx, peores_tiempos))
 
 
 
