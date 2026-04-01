@@ -1,6 +1,21 @@
 from sys import stdin
 from heapq import heappush,heappop
 
+
+def max_tareas(trabajos):
+
+    suma_total = 0
+    heap = []
+    for d, q in trabajos:
+        suma_total += q
+        heappush(heap, -q)
+        if suma_total > d:
+            q = heappop(heap)
+            suma_total += q
+
+    return len(heap)
+
+
 def main():
 
     casos = int(stdin.readline())
@@ -16,16 +31,9 @@ def main():
 
         trabajos.sort()
 
-        suma_total = 0
-        heap = []
-        for d, q in trabajos:
-            suma_total += q
-            heappush(heap, -q)
-            if suma_total > d:
-                q = heappop(heap)
-                suma_total += q
+        ans = max_tareas(trabajos)
 
-        print(len(heap))
+        print(ans)
 
 
         casos -= 1

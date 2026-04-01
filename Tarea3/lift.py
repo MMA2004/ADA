@@ -4,7 +4,7 @@ from heapq import heappush,heappop
 INF = float('inf')
 
 
-def dijkstra(n, k, T, pisos, pisos_conectores, pos, worst):
+def dijkstra(n, k, T, pisos, pisos_conectores, pos, peores_tiempos):
 
     dist = {}
     pqueue = []
@@ -12,7 +12,7 @@ def dijkstra(n, k, T, pisos, pisos_conectores, pos, worst):
     # Inicialización desde piso 0
     for ascensor in range(n):
         if 0 in pisos[ascensor]:
-            dist[(0, ascensor)] = worst[ascensor][0]
+            dist[(0, ascensor)] = peores_tiempos[ascensor][0]
             heappush(pqueue, (dist[(0, ascensor)], (0, ascensor)))
 
     # Dijkstra
@@ -49,46 +49,13 @@ def dijkstra(n, k, T, pisos, pisos_conectores, pos, worst):
                 if ascensor_nuevo != ascensor:
 
                     v = (piso, ascensor_nuevo)
-                    duv = 5 + worst[ascensor_nuevo][piso]
+                    duv = 5 + peores_tiempos[ascensor_nuevo][piso]
 
                     if v not in dist or du + duv < dist[v]:
                         dist[v] = du + duv
                         heappush(pqueue, (dist[v], v))
 
-    # 🎯 buscar mejor llegada a k
-    ans = INF
-    for ascensor in range(n):
-        if (k, ascensor) in dist:
-            if dist[(k, ascensor)] < ans:
-                ans = dist[(k, ascensor)]
-
-    if ans == INF:
-        return "IMPOSSIBLE"
-    else:
-        return ans
-
-
-
-# Implementación algoritmo de Dijkstra para la versión uno a uno
-def dijkstra1(G, s, t):
-    dist = [INF for _ in range(len(G))];
-    dist[s] = 0
-    pqueue, found = list(), False
-    # for u in range(len(G)): heappush(pqueue, (dist[u], u))
-    heappush(pqueue, (dist[s], s))
-
-    while len(pqueue) != 0 and not found:
-        du, u = heappop(pqueue)
-        if u == t:
-            found = True
-        else:
-            if dist[u] == du:
-                for v, duv in G[u]:
-                    if du + duv < dist[v]:
-                        dist[v] = du + duv
-                        heappush(pqueue, (dist[v], v))
-    return dist[t]
-
+    return dist
 
 
 def main():
@@ -118,16 +85,25 @@ def main():
                 max_distancia = max(abs(piso - x) for x in pisos[ascensor])
                 peores_tiempos[ascensor][piso] = max_distancia * T[ascensor]
 
-        pos_idx = {}
-        for i in range(n):
-            for idx, f in enumerate(pisos[i]): pos_idx[(f, i)] = idx
+            pos_idx = {}
+            for ascensor in range(n):
+                idx = 0
+                for piso in pisos[ascensor]:
+                    pos_idx[(piso, ascensor)] = idx
+                    idx += 1
 
+            dist = dijkstra(n, T, pisos, pisos_ascensores, pos_idx, peores_tiempos)
 
-        print(dijkstra(n, k, T, pisos, pisos_conectores, pos_idx, peores_tiempos))
+            ans = INF
+            for ascensor in range(n):
+                if (k, ascensor) in dist:
+                    if dist[(k, ascensor)] < ans:
+                        ans = dist[(k, ascensor)]
 
-
-
-
+        if ans == INF:
+            print("IMPOSSIBLE")
+        else:
+            print(ans)
 
         linea = stdin.readline()
 
