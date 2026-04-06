@@ -1,83 +1,70 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+04/04/2026
+
+"""
+
 from sys import stdin
+from heapq import heappush, heappop
 
-class Arista:
-    def __init__(self, u, v, peso):
-        self.u = u
-        self.v = v
-        self.peso = peso
+INF = float('inf')
 
-    def __lt__(self, other):
-        return self.peso > other.peso
+def prim(s, n, adj):
+    d = [-INF] * n
+    p = [-1] * n
+    visitado = [False] * n
 
-
-class DSU:
-    def __init__(self, n):
-        self.padre = list(range(n))
-        self.rango = [0]*n
-
-    def find(self, v):
-        if self.padre[v] == v:
-            ans = v
-        else:
-            self.padre[v] = self.find(self.padre[v])
-            ans = self.padre[v]
-        return ans
-
-    def union(self, u, v):
-        u = self.find(u)
-        v = self.find(v)
-
-        if u != v:
-            if self.rango[u] < self.rango[v]:
-                u, v = v, u
-
-            self.padre[v] = u
-            if self.rango[u] == self.rango[v]:
-                self.rango[u] += 1
-
-
-
-def kruskal(nodos, aristas):
-    dsu = DSU(nodos)
     total = 0
-    mst = []
+    d[s] = 0
 
-    aristas.sort()
+    cola = []
+    heappush(cola, (0, s))
 
-    for arista in aristas:
-        u, v, peso = arista.u, arista.v, arista.peso
+    while cola:
+        peso, u = heappop(cola)
+        peso = -peso
 
-        if dsu.find(u) != dsu.find(v):
-            mst.append(arista)
-            total += peso
-            dsu.union(u, v)
+        if not visitado[u]:
+
+            visitado[u] = True
+
+            if peso == d[u]:
+                total += peso
+
+                for pesoAux, v in adj[u]:
+                    if not visitado[v] and pesoAux > d[v]:
+                        p[v] = u
+                        d[v] = pesoAux
+                        heappush(cola, (-d[v], v))
 
     return total
 
-def main():
 
+def main():
     casos = int(stdin.readline())
 
     while casos:
 
         nodos, aristas = map(int, stdin.readline().split())
 
-        circutio = []
+        circutio = [[] for _ in range(nodos)]
         peso_total = 0
 
         for _ in range(aristas):
             u, v, peso = map(int, stdin.readline().split())
-            circutio.append(Arista(u-1, v-1, peso))
+
+            circutio[u-1].append((peso, v-1))
+            circutio[v-1].append((peso, u-1))
             peso_total += peso
 
-        peso_maximo = kruskal(nodos, circutio)
-
+        peso_maximo = prim(0, nodos, circutio)
 
         print(peso_total - peso_maximo)
 
         casos -= 1
 
-    nada = stdin.readline()
+    stdin.readline()
+
 
 main()
-

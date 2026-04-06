@@ -1,3 +1,33 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+02/04/2026
+
+Complejidad:
+
+Sea n el número de ascensores y m el número de pisos por ascensor.
+
+Primero se construyen las estructuras pisos_conectores, peores_tiempos y pos_idx,
+recorriendo los pisos de cada ascensor. Esto tiene un costo de O(n·m).
+
+Luego se ejecuta el algoritmo de Dijkstra sobre un grafo donde cada nodo
+representa un par (piso, ascensor), por lo que el número de nodos es O(n·m).
+
+Desde cada nodo se puede mover a dos pisos dentro del mismo ascensor,
+y además cambiar de ascensor en el mismo piso, lo cual en el peor caso implica
+hasta n conexiones. Por lo tanto, el número de aristas es O(n²·m).
+
+Utilizando una cola de prioridad, Dijkstra tiene un costo de
+O((V + E) log V), lo que en este caso corresponde a:
+
+O(n^2·m log(n·m))
+
+Por lo tanto, la complejidad total del algoritmo es:
+
+O(n^2·m log(n·m))
+
+"""
+
 from sys import stdin
 from heapq import heappush,heappop
 
@@ -19,12 +49,12 @@ def dijkstra(n, T, pisos, pisos_conectores, pos, peores_tiempos):
     while len(pqueue) != 0:
         du, (piso, ascensor) = heappop(pqueue)
 
-        if (piso, ascensor) in dist or dist[(piso, ascensor)] == du:
+        if dist[(piso, ascensor)] == du:
 
             # 1. moverse dentro del ascensor
             idx = pos[(piso, ascensor)]
 
-            # anterior
+            # piso de abajo
             if idx > 0:
                 nuevo_piso = pisos[ascensor][idx - 1]
                 v = (nuevo_piso, ascensor)
@@ -34,7 +64,7 @@ def dijkstra(n, T, pisos, pisos_conectores, pos, peores_tiempos):
                     dist[v] = du + duv
                     heappush(pqueue, (dist[v], v))
 
-            # siguiente
+            # piso de arriba
             if idx < len(pisos[ascensor]) - 1:
                 nuevo_piso = pisos[ascensor][idx + 1]
                 v = (nuevo_piso, ascensor)
@@ -84,8 +114,10 @@ def main():
             peores_tiempos = [{} for _ in range(n)]
 
             for ascensor in range(n):
+                piso_inicial = pisos[ascensor][0]
+                piso_final = pisos[ascensor][-1]
                 for piso in pisos[ascensor]:
-                    max_distancia = max(abs(piso - x) for x in pisos[ascensor])
+                    max_distancia = max(piso - piso_inicial, piso_final - piso)
                     peores_tiempos[ascensor][piso] = max_distancia * T[ascensor]
 
             pos_idx = {}
