@@ -38,6 +38,8 @@ def main():
     casos = int(stdin.readline())
     global res
     for i in range(casos):
+        stdin.readline()
+
         n = int(stdin.readline())
         matriz = []
         visitados = [[False] * n for _ in range(n)]
@@ -52,7 +54,13 @@ def main():
 
         resultado = list(res)
         resultado.sort(key=criterio)
-        print(resultado)
+
+        for palabra in resultado:
+            print(''.join(palabra))
+
+
+        if i != casos - 1:
+            print()
 
 main()
 
