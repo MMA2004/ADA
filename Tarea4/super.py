@@ -1,3 +1,9 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+22/04/2026
+"""
+
 from sys import stdin
 
 def phi(sol, n, m, i, check):
@@ -12,6 +18,20 @@ def phi(sol, n, m, i, check):
                 if i < n or newCheck % i == 0:
                     ans = phi(sol, n, m, i + 1, newCheck)
                 sol.pop()
+            k += 1
+    return ans
+
+def phi2(sol, n, m, i, acumulador):
+    if acumulador == m:
+        ans = sol
+    else:
+        k, ans = 0, 0
+        while k < 10 and ans == 0:
+            if i != 1 or k != 0:
+                sol = sol * 10 + k
+                if i < n or sol % i == 0:
+                    ans = phi(sol, n, m, i + 1, acumulador + 1)
+                sol = sol // 10
             k += 1
     return ans
 
