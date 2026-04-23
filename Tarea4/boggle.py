@@ -1,3 +1,9 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+
+"""
+
 from sys import stdin
 
 direcciones = [
@@ -54,9 +60,10 @@ def main():
 
         resultado = list(res)
         resultado.sort(key=criterio)
-
+        print(resultado)
         for palabra in resultado:
             print(''.join(palabra))
+
 
 
         if i != casos - 1:

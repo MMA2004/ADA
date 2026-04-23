@@ -1,39 +1,30 @@
+"""
+Mateo Monroy Aristizabal
+8987333
+22/04/2026
+"""
+
+
 from sys import stdin
 
-def checkFinal(sol, automata, estado, t):
-    flag = True
-    i = 0
-    while flag and i < t:
-        a = sol[(i - 1) % t]
-        b = sol[i]
-        c = sol[(i + 1) % t]
-        num = a << 2 | b << 1 | c
-        if automata[7 - num] != estado[i]:
-            flag = False
-        i = i + 1
 
-    return flag
-
-
-def checkFinal2(sol, automata, estado, t):
+def checkFinal(sol, automata, estado):
     # verificar posición 0
-    ans = True
+    ans = False
     a = sol[-1]
     b = sol[0]
     c = sol[1]
     num = (a << 2) | (b << 1) | c
 
-    if automata[7 - num] != estado[0]:
-        ans = False
+    if automata[7 - num] == estado[0]:
+        # verificar última posición
+        a = sol[-2]
+        b = sol[-1]
+        c = sol[0]
+        num = (a << 2) | (b << 1) | c
 
-    # verificar última posición
-    a = sol[-2]
-    b = sol[-1]
-    c = sol[0]
-    num = (a << 2) | (b << 1) | c
-
-    if automata[7 - num] != estado[t - 1] and ans:
-        ans = False
+        if automata[7 - num] == estado[-1]:
+            ans = True
 
     return ans
 
@@ -49,7 +40,7 @@ def phi(sol, estado, automata, t):
     ans = False
 
     if len(sol) == t:
-        ans = checkFinal2(sol, automata, estado, t)
+        ans = checkFinal(sol, automata, estado)
     else:
         i = 0
         opciones = [0, 1]
