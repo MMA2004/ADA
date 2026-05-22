@@ -1,84 +1,125 @@
-import sys
+"""
+Mateo Monroy Aristizabal
+8987333
 
-# Aumentar el límite de recursión
-sys.setrecursionlimit(2000)
+"""
+from sys import stdin
+
 INF = float('inf')
 
 
+def phi(u, idx, k, memo, graph, isTransmission):
+    """
+        Calcula mediante programación dinámica el peso máximo posible
+        de las aristas conectadas en el subárbol del nodo `u`, de modo que se
+        incluyan exactamente `k` nodos de transmisión.
 
-# 2. La función DP con estructura clásica
-def dp(u, idx, k, memo, graph, isTransmission):
+        Args:
+            u (int): El identificador del nodo actual que se está evaluando.
+            idx (int): El índice del hijo actual del nodo `u` dentro de la lista de adyacencia.
+            k (int): La cantidad exacta de nodos de transmisión que deben incluirse
+                (asignarse) en el subárbol a partir de este punto.
+            memo (dict): Diccionario utilizado para la memorización. Las claves son
+                tuplas de estado `(u, idx, k)` y los valores son los pesos máximos calculados.
+            graph (list): Lista de adyacencia que representa el árbol.
+                `graph[u]` contiene una lista de tuplas `(v, w)`, donde `v` es el nodo hijo
+                y `w` es el peso de la arista que los conecta.
+            isTransmission (list): Estructura que mapea el ID de un nodo a un
+                booleano, indicando si dicho nodo es de transmisión (`True`) o no (`False`).
+
+        Returns:
+            int: El peso máximo acumulado de las aristas si es posible alcanzar
+            exactamente `k` nodos de transmisión. Retorna `-INF` si el estado es inválido
+            (no es posible formar exactamente `k` nodos).
+        """
     # Verificar si ya calculamos este estado
     if (u, idx, k) in memo:
-        return memo[(u, idx, k)]
-
-    # CASO BASE: Ya no hay más hijos para evaluar en este nodo
-    if idx == len(graph[u]):
-        k_propio = 1 if isTransmission[u] else 0
-        if k == k_propio:
-            ans = 0  # Cumplimos la meta de k exactos, no sumamos más aristas
-        else:
-            ans = -INF  # Estado inválido: sobraron o faltaron nodos por asignar
+        ans = memo[(u, idx, k)]
     else:
-        v, w = graph[u][idx]
-        ans = -INF
+        # CASO BASE: Ya no hay más hijos para evaluar en este nodo
+        if idx == len(graph[u]):
+            k_propio = 1 if isTransmission[u] else 0
+            if k == k_propio:
+                ans = 0  # Cumplimos la meta de k exactos, no sumamos más aristas
+            else:
+                ans = -INF  # Estado inválido: sobraron o faltaron nodos por asignar
+        else:
+            v, w = graph[u][idx]
 
-        # OPCIÓN 1: NO tomar la rama de este hijo
-        # Le pasamos toda la responsabilidad de formar 'k' a los siguientes hijos
-        ans = max(ans, dp(u, idx + 1, k, memo, graph, isTransmission))
+            # OPCIÓN 1: NO tomar la rama de este hijo
+            # Le pasamos toda la responsabilidad de formar 'k' a los siguientes hijos
+            ans = phi(u, idx + 1, k, memo, graph, isTransmission)
 
-        # OPCIÓN 2: TOMAR la rama de este hijo
-        # Le damos 'k_v' nodos al hijo 'v', y 'k - k_v' a los siguientes hijos de 'u'
-        # k_v debe ser al menos 1 porque para tomar la rama, el hijo debe infectarse
-        for k_v in range(1, k + 1):
-            val_hijo = dp(v, 0, k_v, memo, graph, isTransmission)  # Lo que gana el hijo usando todos sus propios hijos
-            val_resto = dp(u, idx + 1, k - k_v, memo, graph, isTransmission)  # Lo que ganan los demás hijos de u
+            # OPCIÓN 2: TOMAR la rama de este hijo
+            # Le damos 'k_v' nodos al hijo 'v', y 'k - k_v' a los siguientes hijos de 'u'
+            # k_v debe ser al menos 1 porque para tomar la rama, el hijo debe infectarse
+            for k_v in range(1, k + 1):
+                val_son = phi(v, 0, k_v, memo, graph, isTransmission)  # Lo que gana el hijo usando todos sus propios hijos
+                val_rest = phi(u, idx + 1, k - k_v, memo, graph, isTransmission)  # Lo que ganan los demás hijos de u
 
-            if val_hijo != -INF and val_resto != -INF:
-                ans = max(ans, val_hijo + val_resto + w)
+                if val_son != -INF and val_rest != -INF:
+                    ans = max(ans, val_son + val_rest + w)
 
     # Guardar en memoria
     memo[(u, idx, k)] = ans
     return ans
 
 def main():
-    line1 = sys.stdin.readline().split()
-    if not line1: return
-    n, m, q = map(int, line1)
+    """
+        Función principal que maneja la lectura de datos, construcción del grafo
+        y la ejecución de las consultas.
 
-    graph = [[] for _ in range(n)]
-    for _ in range(n - 1):
-        u, v, w = map(int, sys.stdin.readline().split())
-        graph[u].append((v, w))
+        Lee desde la entrada múltiples casos de prueba. Para cada caso,
+        construye un árbol (n-1 aristas), identifica los nodos de transmisión y responde a
+        múltiples consultas usando programación dinámica. Para cada consulta 'k',
+        busca el peso máximo posible de un subárbol que contenga exactamente 'k' nodos
+        de transmisión.
 
-    isTransmission = [False] * n
-    for i in map(int, sys.stdin.readline().split()):
-        isTransmission[i] = True
+        Formato de entrada esperado por caso de prueba:
+            - Línea 1: Tres enteros `n` (nodos), `m` (nodos de transmisión), `q` (consultas).
+            - Siguientes `n-1` líneas: Tres enteros `u v w` (arista de `u` a `v` con peso `w`).
+            - Siguiente línea: `m` enteros que representan los IDs de los nodos de transmisión.
+            - Siguiente línea: `q` enteros que representan los valores de `k` a consultar.
 
-    lista_de_consultas = list(map(int, sys.stdin.readline().split()))
+        Returns:
+            None. Los resultados de cada consulta se imprimen directamente en la
+            salida.
+        """
+    line = stdin.readline().split()
+    while line:
+        n, m, q = map(int, line)
 
-    # Memoria global para la DP
-    memo = {}
+        graph = [[] for _ in range(n)]
+        for _ in range(n - 1):
+            u, v, w = map(int, stdin.readline().split())
+            graph[u].append((v, w))
 
-    # 3. Procesar las consultas
-    results = []
-    for x in lista_de_consultas:
-        if x == 0:
-            results.append("0")
-            continue
+        isTransmission = [False] * n
+        for i in map(int, stdin.readline().split()):
+            isTransmission[i] = True
 
-        max_cripto = 0
-        # El ataque puede tener como "raíz" a cualquier nodo del árbol
-        for u in range(n):
-            if isTransmission[u]:
-                val = dp(u, 0, x, memo, graph, isTransmission)
-                print(u,val)
-                if val > max_cripto:
-                    max_cripto = val
+        query_list = list(map(int, stdin.readline().split()))
 
-        results.append(str(max_cripto))
+        # Memoria global para la DP
+        memo = {}
 
-    sys.stdout.write("\n".join(results) + "\n")
+        # 3. Procesar las consultas
+        results = []
+        for k in query_list:
+            max_cripto = 0
+            if k == 0:
+                results.append("0")
+            else:
+                # El ataque puede tener como "raíz" a cualquier nodo del árbol
+                for u in range(n):
+                    if isTransmission[u]:
+                        val = phi(u, 0, k, memo, graph, isTransmission)
+                        if val > max_cripto:
+                            max_cripto = val
+
+            print(max_cripto)
+
+        line = stdin.readline().split()
 
 
 
