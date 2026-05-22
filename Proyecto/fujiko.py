@@ -2,6 +2,8 @@
 Mateo Monroy Aristizabal
 8987333
 
+Como miembro de la comunidad académica de la Pontificia Universidad Javeriana Cali me comprometo
+a seguir los más altos estándares de integridad académica.
 """
 from sys import stdin
 
@@ -103,14 +105,10 @@ def main():
         # Memoria global para la DP
         memo = {}
 
-        # 3. Procesar las consultas
-        results = []
         for k in query_list:
             max_cripto = 0
-            if k == 0:
-                results.append("0")
-            else:
-                # El ataque puede tener como "raíz" a cualquier nodo del árbol
+            if k != 0:
+                # El ataque puede tener como "raíz" a cualquier nodo del árbol si es de transmisión
                 for u in range(n):
                     if isTransmission[u]:
                         val = phi(u, 0, k, memo, graph, isTransmission)
